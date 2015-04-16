@@ -104,7 +104,6 @@ public final class NucleusAssistant implements TalkListener {
 
 	@Override
 	public void contacted(String identifier, String tag) {
-		
 		ConvertTool.getInstance().notifyContaced(identifier, tag);
 	}
 
@@ -124,7 +123,7 @@ public final class NucleusAssistant implements TalkListener {
 		// Nothing
 	}
 	
-	public void convert(String filePath, String filePrefix){
+	public void convert(ConvertTask task){
 	
 			ActionDialect ad = new ActionDialect();
 			ad.setAction(CubeToolsAPI.ACTION_CONVERT);
@@ -138,8 +137,10 @@ public final class NucleusAssistant implements TalkListener {
 			JSONObject value = null;
 			try{
 				value = new JSONObject();
-				value.put("filePath", filePath);
-				value.put("filePrefix", filePrefix);
+				value.put("filePath", task.getFilePath());
+				value.put("filePrefix", task.getFilePrefix());
+				value.put("fileExtension", task.getFileExtension());
+				value.put("taskTag", task.getTaskTag());
 			}catch(JSONException e){			
 				e.printStackTrace();
 			}
@@ -150,33 +151,96 @@ public final class NucleusAssistant implements TalkListener {
 		
 	}
 	
+	/**
+	 * 查找文件 
+	 */
+	
+	public void findFile(ConvertTask task ){
+		ActionDialect ad = new ActionDialect();
+		ad.setAction(CubeToolsAPI.ACTION_FIND_FILE);
+		ad.act(new ActionDelegate(){
+			@Override
+			public void doAction(ActionDialect dialect) {
+				
+			}
+		});
+		
+		JSONObject value = null;
+		try{
+			value = new JSONObject();
+			value.put("filePrefix", task.getFilePrefix());
+			value.put("fileExtension", task.getFileExtension());
+			value.put("taskTag", task.getTaskTag());
+		}catch(JSONException e){			
+			e.printStackTrace();
+		}
+		ad.appendParam("data", value.toString());
+	
+		// 发送数据
+		TalkService.getInstance().talk(CubeToolsAPI.ConsoleCelletIdentifier, ad);
+	}
+	
 	private void processActionDialect(ActionDialect dialect){
 		if(dialect.getAction().equals(CubeToolsAPI.ACTION_CONVERT_STATE)){
 			String tag = dialect.getOwnerTag();
 			String stringData = ((ActionDialect)dialect).getParamAsString("data");
 			JSONObject data = null;
 			int result = 0;
+			String filePath = null;
+			String fileExtension = null;
+			String filePrefix = null;
+			String taskTag = null;
 			try {
 				data = new JSONObject(stringData);
 				result = data.getInt("state");
+				taskTag = data.getString("taskTag");
+				filePath = data.getString("filePath");
+				fileExtension = data.getString("fileExtension");
+				filePrefix = data.getString("filePrefix");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			ConvertTask task = new ConvertTask(filePath, filePrefix,
+					 fileExtension, taskTag);
+			
 			if(StateCode.Queueing.getCode() == result){
-				ConvertTool.getInstance().notifyListener(StateCode.Queueing);
+				ConvertTool.getInstance().notifyListener(task, StateCode.Queueing);
 			}else if(StateCode.Executing.getCode() == result){
-				ConvertTool.getInstance().notifyListener(StateCode.Executing);
+				ConvertTool.getInstance().notifyListener(task, StateCode.Executing);
 			}else if(StateCode.Failed.getCode() == result){
-				ConvertTool.getInstance().notifyListener(StateCode.Failed);
+				ConvertTool.getInstance().notifyListener(task, StateCode.Failed);
 			}else if(StateCode.Successed.getCode() == result){
-				ConvertTool.getInstance().notifyListener(StateCode.Successed);
+				ConvertTool.getInstance().notifyListener(task, StateCode.Successed);
 			}else if(StateCode.Unknown.getCode() == result){
-				ConvertTool.getInstance().notifyListener(StateCode.Unknown);
+				ConvertTool.getInstance().notifyListener(task, StateCode.Unknown);
 			}
 				
 			
-		}else if (dialect.getAction().equals("c")){
+		}else if (dialect.getAction().equals(CubeToolsAPI.ACTION_FIND_FILE_RESULT)){
+			String tag = dialect.getOwnerTag();
+			String stringData = ((ActionDialect)dialect).getParamAsString("data");
+			JSONObject data = null;
+			String result = null;
+			String taskTag = null;
+			List<String> resultArray = new ArrayList();
+			try {
+				data = new JSONObject(stringData);
+				result = data.getString("result");
+				taskTag = data.getString("taskTag");
+				if(null != result){
+					String[] array = result.split("\n");
+					for(String str : array){
+						int index = str.lastIndexOf("/");
+						String subStr = str.substring(index+1, str.length());
+						resultArray.add(subStr);
+					}
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			//TODO
+			ConvertTool.getInstance().notifyFindFileResult(taskTag, resultArray);
 			
 		}
 	}
