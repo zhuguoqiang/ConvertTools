@@ -1,5 +1,11 @@
 package cube.converttools;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 public class ConvertUtils {
 
 	/**
@@ -46,6 +52,20 @@ public class ConvertUtils {
 		}
 
 		return fileName.substring(0, lastIndex);
+	}
+	
+	public static List<String> parseToList(JSONArray array) {
+		List<String> list = new ArrayList<String>();
+		for(int i=0; i < array.length(); i++){
+			String s = null;
+			try {
+				s = array.getString(i);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			list.add(s);
+		}
+		return list;
 	}
 
 }

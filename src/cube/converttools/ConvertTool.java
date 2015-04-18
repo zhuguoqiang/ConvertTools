@@ -1,4 +1,4 @@
-package cube.convertTools;
+package cube.converttools;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -33,6 +33,10 @@ public class ConvertTool {
 	 * 转换任务监听器。
 	 */
 	private ConvertTaskListener listener;
+	
+	/**
+	 * 构造 
+	 */
 
 	private ConvertTool() {
 
@@ -98,10 +102,17 @@ public class ConvertTool {
 	}
 
 	/**
-	 * 查看固定前缀， 固定扩展名的文件
+	 * 请求转换任务完成后，生成的文件路径列表
 	 */
-	public void getFile(ConvertTask task) {
-		NucleusAssistant.getInstance().findFile(task);
+	public void requestConvertedFileList(ConvertTask task) {
+		NucleusAssistant.getInstance().requestConvertedFileList(task);
+	}
+	
+	/**
+	 * 移动文件
+	 */
+	public void moveFile(ConvertTask task, List<String> result) {
+		NucleusAssistant.getInstance().moveFile(task, result);
 	}
 
 	/**
@@ -117,16 +128,18 @@ public class ConvertTool {
 		if (listener != null) {
 			listener.onConvertCompleted(task, state);
 		}
+		//转换成功，查询转换文件，
 
 		if (StateCode.Successed.getCode() == state.getCode()) {
-			ConvertTool.getInstance().getFile(task);
+			this.requestConvertedFileList(task);
 		}
 	}
 
-	public void notifyFindFileResult(String taskTag, List<String> result) {
+	public void notifyConvertTaskWithFileList(ConvertTask task) {
 		if (listener != null) {
-			listener.onConvertResult(taskTag, result);
+			listener.onConvertTaskWithFileList(task);
 		}
+		
 	}
 
 }
