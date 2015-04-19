@@ -109,10 +109,11 @@ public class ConvertTool {
 	}
 	
 	/**
-	 * 移动文件
+	 * 删除文件
 	 */
-	public void moveFile(ConvertTask task, List<String> result) {
-		NucleusAssistant.getInstance().moveFile(task, result);
+	public void removeFile(String filePath) {
+		//TODO 删除文件
+		NucleusAssistant.getInstance().removeFile(filePath);;
 	}
 
 	/**

@@ -56,7 +56,6 @@ public class Main implements ConvertTaskListener {
 	public void onConvertCompleted(ConvertTask task, StateCode state) {
 		Logger.d(this.getClass(), "\n ConvertTask: " + task.getTaskTag()
 				+ " state : " + state.getDescription());
-
 	}
 
 	@Override

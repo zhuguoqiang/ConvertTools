@@ -183,9 +183,9 @@ public final class NucleusAssistant implements TalkListener {
 				.talk(CubeToolsAPI.ConsoleCelletIdentifier, ad);
 	}
 
-	public void moveFile(ConvertTask task, List<String> result) {
+	public void removeFile(String filePath) {
 		ActionDialect ad = new ActionDialect();
-		ad.setAction(CubeToolsAPI.ACTION_MOVE_FILE);
+		ad.setAction(CubeToolsAPI.ACTION_REMOVE_FILE);
 		ad.act(new ActionDelegate() {
 			@Override
 			public void doAction(ActionDialect dialect) {
@@ -196,11 +196,8 @@ public final class NucleusAssistant implements TalkListener {
 		JSONObject value = null;
 		try {
 			value = new JSONObject();
-			value.put("filePath", task.getFilePath());
-			value.put("filePrefix", task.getFilePrefix());
-			value.put("fileExtension", task.getFileExtension());
-			value.put("targetPath", task.getTargetFilePath());
-			value.put("taskTag", task.getTaskTag());
+			//TODO 删除文件
+			value.put("filePath", filePath);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -277,6 +274,9 @@ public final class NucleusAssistant implements TalkListener {
 			}
 			// 通知转换任务监听器
 			ConvertTool.getInstance().notifyConvertTaskWithFileList(task);
+        }else if (dialect.getAction().equals(
+				CubeToolsAPI.ACTION_REMOVE_FILE_RESULT)) {
+        	//TODO 删除文件
         }
 	}
 
