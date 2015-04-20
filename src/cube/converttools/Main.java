@@ -39,32 +39,44 @@ public class Main implements ConvertTaskListener {
 		// 已连接
 		Utils utils = new Utils();
 		// 封装转换任务
-		String filePath1 = "/home/lztxhost/Documents/CubeConsole/MCE_Client_v2.doc";
-//		String targetPath = "/Users/admin/Documents/workspace/.metadata/.plugins"
-//				+ "/org.eclipse.wst.server.core/tmp1/wtpwebapps/CubeCloud/assets/images";
-		String targetPath = "/home/lztxhost/Documents/";
-		ConvertTask task1 = new ConvertTask(filePath1, targetPath);
+		String filePath1 = "/home/lztxhost/Documents/CubeConsole/Software_UI_Design.pptx";
+		String subPath = "admin/Software/";
+		ConvertTask task1 = new ConvertTask(filePath1, subPath);
 
 		ConvertTool.getInstance().addConvertTask(task1);
 
 		String filePath2 = "/home/lztxhost/Documents/CubeConsole/Mooohe.ppt";
-		ConvertTask task2 = new ConvertTask(filePath2, targetPath);
+		ConvertTask task2 = new ConvertTask(filePath2, subPath);
 		ConvertTool.getInstance().addConvertTask(task2);
 	}
 
 	@Override
-	public void onConvertCompleted(ConvertTask task, StateCode state) {
+	public void onQueueing(ConvertTask task) {
 		Logger.d(this.getClass(), "\n ConvertTask: " + task.getTaskTag()
-				+ " state : " + state.getDescription());
+				+ " Queueing ");
 	}
 
 	@Override
-	public void onConvertTaskWithFileList(ConvertTask task) {
-		// 打印输出png文件访问地址
-		Logger.d(this.getClass(), "\n ConvertTask: " + task.getTaskTag() + "\n"
-				+ " FileList.size() : " + task.getConvertedFileList().size()
-				+ "\n" + " FileList : "
-				+ task.getConvertedFileList().toString());
+	public void onStarted(ConvertTask task) {
+		// TODO
+		Logger.d(this.getClass(), "\n ConvertTask: " + task.getTaskTag()
+				+ " Started ");
+
+	}
+
+	@Override
+	public void onCompleted(ConvertTask task) {
+		Logger.d(this.getClass(), "\n ConvertTask: " + task.getTaskTag()
+				+ " state : " + task.state.getDescription() + "\n"
+				+ " FileURLList : " + task.getConvertedFileURLList().toString());
+
+	}
+
+	@Override
+	public void onTaskFailed(ConvertTask task, StateCode code) {
+		// TODO
+		Logger.d(this.getClass(), "\n ConvertTask: " + task.getTaskTag()
+				+ " Failed : " + code.getDescription());
 	}
 
 }

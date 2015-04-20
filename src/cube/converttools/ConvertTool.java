@@ -1,8 +1,6 @@
 package cube.converttools;
 
-import java.io.File;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 /**
@@ -33,9 +31,9 @@ public class ConvertTool {
 	 * 转换任务监听器。
 	 */
 	private ConvertTaskListener listener;
-	
+
 	/**
-	 * 构造 
+	 * 构造
 	 */
 
 	private ConvertTool() {
@@ -102,18 +100,12 @@ public class ConvertTool {
 	}
 
 	/**
-	 * 请求转换任务完成后，生成的文件路径列表
-	 */
-	public void requestConvertedFileList(ConvertTask task) {
-		NucleusAssistant.getInstance().requestConvertedFileList(task);
-	}
-	
-	/**
 	 * 删除文件
 	 */
 	public void removeFile(String filePath) {
-		//TODO 删除文件
-		NucleusAssistant.getInstance().removeFile(filePath);;
+		// TODO 删除文件
+		NucleusAssistant.getInstance().removeFile(filePath);
+		;
 	}
 
 	/**
@@ -126,21 +118,22 @@ public class ConvertTool {
 	}
 
 	public void notifyListener(ConvertTask task, StateCode state) {
+
+		task.setStateCode(state);
 		if (listener != null) {
-			listener.onConvertCompleted(task, state);
+			if (StateCode.Queueing.getCode() == state.getCode()) {
+				listener.onQueueing(task);
+			}
+			else if (StateCode.Executing.getCode() == state.getCode()) {
+				listener.onStarted(task);
+			} 
+			else if (StateCode.Successed.getCode() == state.getCode()) {
+				listener.onCompleted(task);
+			}
+			else if (StateCode.Failed.getCode() == state.getCode()) {
+				listener.onTaskFailed(task, state);
+			}
 		}
-		//转换成功，查询转换文件，
 
-		if (StateCode.Successed.getCode() == state.getCode()) {
-			this.requestConvertedFileList(task);
-		}
 	}
-
-	public void notifyConvertTaskWithFileList(ConvertTask task) {
-		if (listener != null) {
-			listener.onConvertTaskWithFileList(task);
-		}
-		
-	}
-
 }

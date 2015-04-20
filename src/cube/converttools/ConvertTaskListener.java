@@ -1,12 +1,15 @@
 package cube.converttools;
 
-import java.util.List;
-
 public interface ConvertTaskListener {
+	
+	public void onQueueing(ConvertTask task);
+
+	public void onStarted(ConvertTask task);
+
+	public void onCompleted(ConvertTask task);
+
+	public void onTaskFailed(ConvertTask task, StateCode code);
 	
 	public void onConvertContacted(String identifier, String tag);
 	
-	public void onConvertCompleted(ConvertTask task, StateCode state);
-	
-	public void onConvertTaskWithFileList(ConvertTask task);
 }

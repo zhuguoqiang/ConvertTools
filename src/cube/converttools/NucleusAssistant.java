@@ -2,7 +2,6 @@ package cube.converttools;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -21,7 +20,6 @@ import net.cellcloud.talk.TalkService;
 import net.cellcloud.talk.TalkServiceFailure;
 import net.cellcloud.talk.dialect.ActionDelegate;
 import net.cellcloud.talk.dialect.ActionDialect;
-import net.cellcloud.talk.dialect.ChunkDialect;
 import net.cellcloud.talk.dialect.Dialect;
 
 public final class NucleusAssistant implements TalkListener {
@@ -126,7 +124,6 @@ public final class NucleusAssistant implements TalkListener {
 	}
 
 	public void convert(ConvertTask task) {
-
 		ActionDialect ad = new ActionDialect();
 		ad.setAction(CubeToolsAPI.ACTION_CONVERT);
 		ad.act(new ActionDelegate() {
@@ -140,7 +137,7 @@ public final class NucleusAssistant implements TalkListener {
 		try {
 			value = new JSONObject();
 			value.put("filePath", task.getFilePath());
-			value.put("targetPath", task.getTargetFilePath());
+			value.put("subPath", task.getSubPath());
 			value.put("taskTag", task.getTaskTag());
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -150,39 +147,11 @@ public final class NucleusAssistant implements TalkListener {
 		// 发送数据
 		TalkService.getInstance()
 				.talk(CubeToolsAPI.ConsoleCelletIdentifier, ad);
-
 	}
 
 	/**
-	 * 查找文件
+	 * 删除文件
 	 */
-
-	public void requestConvertedFileList(ConvertTask task) {
-		ActionDialect ad = new ActionDialect();
-		ad.setAction(CubeToolsAPI.ACTION_REQUEST_CONVERTED_FILE);
-		ad.act(new ActionDelegate() {
-			@Override
-			public void doAction(ActionDialect dialect) {
-
-			}
-		});
-
-		JSONObject value = null;
-		try {
-			value = new JSONObject();
-			value.put("filePath", task.getFilePath());
-			value.put("targetPath", task.getTargetFilePath());
-			value.put("taskTag", task.getTaskTag());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		ad.appendParam("data", value.toString());
-
-		// 发送数据
-		TalkService.getInstance()
-				.talk(CubeToolsAPI.ConsoleCelletIdentifier, ad);
-	}
-
 	public void removeFile(String filePath) {
 		ActionDialect ad = new ActionDialect();
 		ad.setAction(CubeToolsAPI.ACTION_REMOVE_FILE);
@@ -196,7 +165,7 @@ public final class NucleusAssistant implements TalkListener {
 		JSONObject value = null;
 		try {
 			value = new JSONObject();
-			//TODO 删除文件
+			// TODO 删除文件
 			value.put("filePath", filePath);
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -215,19 +184,26 @@ public final class NucleusAssistant implements TalkListener {
 			JSONObject data = null;
 			int state = 0;
 			String filePath = null;
-			String targetPath = null;
+			String subPath = null;
 			String taskTag = null;
+			List<String> convertedFileUrls = null;
+			JSONArray ja = null;
 			try {
 				data = new JSONObject(stringData);
 				state = data.getInt("state");
 				taskTag = data.getString("taskTag");
 				filePath = data.getString("filePath");
-				targetPath = data.getString("targetPath");
+				subPath = data.getString("subPath");
+				if (data.has("convertedFileUrls")) {
+					ja = data.getJSONArray("convertedFileUrls");
+					convertedFileUrls = ConvertUtils.parseToList(ja);
+				}
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			ConvertTask task = new ConvertTask(filePath, targetPath, taskTag);
+			ConvertTask task = new ConvertTask(filePath, subPath, taskTag);
+
+			task.setConvertedFileURLList(convertedFileUrls);
 
 			if (StateCode.Queueing.getCode() == state) {
 				ConvertTool.getInstance().notifyListener(task,
@@ -247,37 +223,9 @@ public final class NucleusAssistant implements TalkListener {
 			}
 
 		} else if (dialect.getAction().equals(
-				CubeToolsAPI.ACTION_REQUEST_CONVERTED_FILE_RESULT)) {
-			String stringData = ((ActionDialect) dialect)
-					.getParamAsString("data");
-			JSONObject data = null;
-			String filePath = null;
-			String targetPath = null;
-			List<String> convertedFiles = null;
-			JSONArray ja = null;
-			String taskTag = null;
-			ConvertTask task = null;
-			
-			try {
-				data = new JSONObject(stringData);
-                filePath = data.getString("filePath");
-                targetPath = data.getString("targetPath");
-                ja = data.getJSONArray("convertedFiles");
-                convertedFiles = ConvertUtils.parseToList(ja);
-				taskTag = data.getString("taskTag");
-				
-			    task = new ConvertTask(filePath, targetPath, taskTag);
-				task.setConvertedFileList(convertedFiles);
-				
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			// 通知转换任务监听器
-			ConvertTool.getInstance().notifyConvertTaskWithFileList(task);
-        }else if (dialect.getAction().equals(
 				CubeToolsAPI.ACTION_REMOVE_FILE_RESULT)) {
-        	//TODO 删除文件
-        }
+			// TODO 删除文件
+		}
 	}
 
 }

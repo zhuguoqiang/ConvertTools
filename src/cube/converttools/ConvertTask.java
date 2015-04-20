@@ -18,9 +18,10 @@ public class ConvertTask {
 	private String filePath = null;
 
 	/**
-	 * 目标文件访问路径
+	 * 目标文件访问子路径
+	 * admin@123/
 	 */
-	private String targetFilePath = null;
+	private String subPath = null;
 
 	/**
 	 * 文件前缀
@@ -40,7 +41,7 @@ public class ConvertTask {
 	/**
 	 * 转换后的文件地址 
 	 */
-	private List<String> convertedFileList = null;
+	private List<String> convertedFileURLList = null;
 
 	private final String FILE_EXTENSION = "png";
 	
@@ -49,16 +50,16 @@ public class ConvertTask {
 	 * 
 	 * @param filePath
 	 *            文件路径
-	 * @param targetFilePath
-	 *            目标文件访问路径
+	 * @param subPath
+	 *            目标文件访问子路径
 	 */
-	public ConvertTask(String filePath, String targetFilePath) {
+	public ConvertTask(String filePath, String subPath) {
 		this.filePath = filePath;
 		this.filePrefix = ConvertUtils
 				.extractFileNameWithoutExtension(filePath);
 		this.fileExtension = FILE_EXTENSION;
 		this.taskTag = Utils.randomString(8);
-		this.targetFilePath = targetFilePath;
+		this.subPath = subPath;
 
 	}
 
@@ -67,18 +68,18 @@ public class ConvertTask {
 	 * 
 	 * @param filePath
 	 *            文件路径
-	 * @param targetFilePath
-	 *            目标文件访问路径
+	 * @param subPath
+	 *            目标文件访问子路径
 	 * @param taskTag
 	 *            任务标签
 	 */
-	public ConvertTask(String filePath, String targetFilePath, String taskTag) {
+	public ConvertTask(String filePath, String subPath, String taskTag) {
 		this.filePath = filePath;
 		this.filePrefix = ConvertUtils
 				.extractFileNameWithoutExtension(filePath);
 		this.fileExtension = FILE_EXTENSION;
 		this.taskTag = taskTag;
-		this.targetFilePath = targetFilePath;
+		this.subPath = subPath;
 
 	}
 
@@ -116,12 +117,12 @@ public class ConvertTask {
 		return this.fileExtension;
 	}
 
-	public void setTargetFilePath(String targetPath) {
-		this.targetFilePath = targetPath;
+	public void setSubPath(String subPath) {
+		this.subPath = subPath;
 	}
 
-	public String getTargetFilePath() {
-		return this.targetFilePath;
+	public String getSubPath() {
+		return this.subPath;
 	}
 
 	public void setTaskTag(String tag) {
@@ -132,12 +133,12 @@ public class ConvertTask {
 		return this.taskTag;
 	}
 	
-	public void setConvertedFileList(List<String> list) {
-		this.convertedFileList = list;
+	public void setConvertedFileURLList(List<String> list) {
+		this.convertedFileURLList = list;
 	}
 
-	public List<String> getConvertedFileList() {
-		return this.convertedFileList;
+	public List<String> getConvertedFileURLList() {
+		return this.convertedFileURLList;
 	}
 
 	public void fireConvert() {

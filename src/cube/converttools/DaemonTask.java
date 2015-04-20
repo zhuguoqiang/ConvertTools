@@ -27,9 +27,7 @@ public class DaemonTask extends Thread {
 					}
 				} else {
 					ConvertTask task = taskQueue.poll();
-					
 					task.state = StateCode.Executing;
-
 					// 开始转换
 					task.fireConvert();
 				}
