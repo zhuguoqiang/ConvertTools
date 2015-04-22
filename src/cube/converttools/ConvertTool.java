@@ -124,8 +124,11 @@ public class ConvertTool {
 			if (StateCode.Queueing.getCode() == state.getCode()) {
 				listener.onQueueing(task);
 			}
-			else if (StateCode.Executing.getCode() == state.getCode()) {
+			else if (StateCode.Started.getCode() == state.getCode()) {
 				listener.onStarted(task);
+			} 
+			else if (StateCode.Executing.getCode() == state.getCode()) {
+				listener.onExecuting(task);
 			} 
 			else if (StateCode.Successed.getCode() == state.getCode()) {
 				listener.onCompleted(task);

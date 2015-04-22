@@ -39,8 +39,8 @@ public class Main implements ConvertTaskListener {
 		// 已连接
 		Utils utils = new Utils();
 		// 封装转换任务
-		String filePath1 = "/home/lztxhost/Documents/CubeConsole/Software_UI_Design.pptx";
-		String subPath = "admin/Software/";
+		String filePath1 = "/home/lztxhost/Documents/CubeConsole/MCE_Client_v2.doc";
+		String subPath = "admin/";
 		ConvertTask task1 = new ConvertTask(filePath1, subPath);
 
 		ConvertTool.getInstance().addConvertTask(task1);
@@ -62,6 +62,12 @@ public class Main implements ConvertTaskListener {
 		Logger.d(this.getClass(), "\n ConvertTask: " + task.getTaskTag()
 				+ " Started ");
 
+	}
+	
+	@Override
+	public void onExecuting(ConvertTask task) {
+		Logger.d(this.getClass(), "\n ConvertTask: " + task.getTaskTag()
+				+ " Executing ");
 	}
 
 	@Override

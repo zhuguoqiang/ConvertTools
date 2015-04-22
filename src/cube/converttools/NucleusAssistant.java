@@ -208,7 +208,12 @@ public final class NucleusAssistant implements TalkListener {
 			if (StateCode.Queueing.getCode() == state) {
 				ConvertTool.getInstance().notifyListener(task,
 						StateCode.Queueing);
-			} else if (StateCode.Executing.getCode() == state) {
+			}
+			else if (StateCode.Started.getCode() == state) {
+				ConvertTool.getInstance().notifyListener(task,
+						StateCode.Started);
+			}  
+			else if (StateCode.Executing.getCode() == state) {
 				ConvertTool.getInstance().notifyListener(task,
 						StateCode.Executing);
 			} else if (StateCode.Failed.getCode() == state) {

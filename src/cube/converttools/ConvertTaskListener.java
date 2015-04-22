@@ -5,6 +5,8 @@ public interface ConvertTaskListener {
 	public void onQueueing(ConvertTask task);
 
 	public void onStarted(ConvertTask task);
+	
+	public void onExecuting(ConvertTask task);
 
 	public void onCompleted(ConvertTask task);
 
