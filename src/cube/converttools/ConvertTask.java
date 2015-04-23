@@ -39,6 +39,11 @@ public class ConvertTask {
 	private String taskTag = null;
 	
 	/**
+	 * 状态码
+	 */
+	private String faileCode = null;
+	
+	/**
 	 * 转换后的文件地址 
 	 */
 	private List<String> convertedFileURLList = null;
@@ -139,6 +144,14 @@ public class ConvertTask {
 
 	public List<String> getConvertedFileURLList() {
 		return this.convertedFileURLList;
+	}
+	
+	public void setFaileCode(String code) {
+		this.faileCode = code;
+	}
+	
+	public String getFaileCode() {
+		return this.faileCode;
 	}
 
 	public void fireConvert() {

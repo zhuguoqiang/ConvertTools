@@ -39,15 +39,20 @@ public class Main implements ConvertTaskListener {
 		// 已连接
 		Utils utils = new Utils();
 		// 封装转换任务
-		String filePath1 = "/home/lztxhost/Documents/CubeConsole/MCE_Client_v2.doc";
+		 String filePath1 =
+		 "/home/lztxhost/Documents/CubeConsole/MCE_Client_v2.doc";
 		String subPath = "admin/";
-		ConvertTask task1 = new ConvertTask(filePath1, subPath);
+		 ConvertTask task1 = new ConvertTask(filePath1, subPath);
+		 ConvertTool.getInstance().addConvertTask(task1);
 
-		ConvertTool.getInstance().addConvertTask(task1);
+		 String filePath2 =
+		 "/home/lztxhost/Documents/CubeConsole/MCE_Cube_Cloud.pdf";
+		 ConvertTask task2 = new ConvertTask(filePath2, subPath);
+		 ConvertTool.getInstance().addConvertTask(task2);
 
-		String filePath2 = "/home/lztxhost/Documents/CubeConsole/Mooohe.ppt";
-		ConvertTask task2 = new ConvertTask(filePath2, subPath);
-		ConvertTool.getInstance().addConvertTask(task2);
+		String filePath3 = "/home/lztxhost/Documents/CubeConsole/aaaaa.png";
+		ConvertTask task3 = new ConvertTask(filePath3, subPath);
+		ConvertTool.getInstance().addConvertTask(task3);
 	}
 
 	@Override
@@ -63,7 +68,7 @@ public class Main implements ConvertTaskListener {
 				+ " Started ");
 
 	}
-	
+
 	@Override
 	public void onExecuting(ConvertTask task) {
 		Logger.d(this.getClass(), "\n ConvertTask: " + task.getTaskTag()
@@ -81,8 +86,12 @@ public class Main implements ConvertTaskListener {
 	@Override
 	public void onTaskFailed(ConvertTask task, StateCode code) {
 		// TODO
-		Logger.d(this.getClass(), "\n ConvertTask: " + task.getTaskTag()
-				+ " Failed : " + code.getDescription());
+		Logger.d(
+				this.getClass(),
+				"\n ConvertTask: " + task.getTaskTag() + " Failed : "
+						+ code.getDescription() + " failCode : "
+						+ task.getFaileCode() + " FileURLList : "
+						+ task.getConvertedFileURLList().toString());
 	}
 
 }

@@ -187,6 +187,7 @@ public final class NucleusAssistant implements TalkListener {
 			String subPath = null;
 			String taskTag = null;
 			List<String> convertedFileUrls = null;
+			String faileCode = null;
 			JSONArray ja = null;
 			try {
 				data = new JSONObject(stringData);
@@ -198,28 +199,31 @@ public final class NucleusAssistant implements TalkListener {
 					ja = data.getJSONArray("convertedFileUrls");
 					convertedFileUrls = ConvertUtils.parseToList(ja);
 				}
+
+				if (data.has("faileCode")) {
+					faileCode = data.getString("faileCode");
+				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 			ConvertTask task = new ConvertTask(filePath, subPath, taskTag);
-
 			task.setConvertedFileURLList(convertedFileUrls);
-
+			
 			if (StateCode.Queueing.getCode() == state) {
 				ConvertTool.getInstance().notifyListener(task,
 						StateCode.Queueing);
-			}
-			else if (StateCode.Started.getCode() == state) {
+			} else if (StateCode.Started.getCode() == state) {
 				ConvertTool.getInstance().notifyListener(task,
 						StateCode.Started);
-			}  
-			else if (StateCode.Executing.getCode() == state) {
+			} else if (StateCode.Executing.getCode() == state) {
 				ConvertTool.getInstance().notifyListener(task,
 						StateCode.Executing);
 			} else if (StateCode.Failed.getCode() == state) {
+				task.setFaileCode(faileCode);
 				ConvertTool.getInstance()
 						.notifyListener(task, StateCode.Failed);
 			} else if (StateCode.Successed.getCode() == state) {
+				
 				ConvertTool.getInstance().notifyListener(task,
 						StateCode.Successed);
 			} else if (StateCode.Unknown.getCode() == state) {
