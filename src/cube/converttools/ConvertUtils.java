@@ -1,6 +1,7 @@
 package cube.converttools;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -65,7 +66,29 @@ public class ConvertUtils {
 			}
 			list.add(s);
 		}
+		
+		Collections.sort(list);
 		return list;
+	}
+	
+	/**
+	 * 提取子路径  subpath
+	 * 
+	 * @param filePath
+	 * @return 
+	 */
+	public static String extractFileSubPathFromFilePath(String filePath) {
+		
+		int endIndex = filePath.lastIndexOf("/");
+		String uploadDirPath = filePath.substring(0, endIndex + 1);
+		// uploadDirPath： /usr/local/tomcat/webapps/ROOT/local/upload/admin/
+		
+		//TODO 取subpath
+		String[] strings = uploadDirPath.split("/");
+		int i = strings.length - 1;
+		String subPath = strings[i] +"/";
+
+		return subPath;
 	}
 
 }

@@ -1,8 +1,6 @@
 package cube.converttools;
 
 public enum StateCode {
-
-	Queueing(100),			//!< 排队中
 	
 	Started(200),           //!< 开始转换
 
@@ -20,27 +18,24 @@ public enum StateCode {
 	StateCode(int code) {
 		this.code = code;
 	}
-	
-	public StateCode StateCode(int result) {
-	
-		return StateCode(result);
-	}
+
+//	public StateCode StateCode(int result) {
+//		return StateCode(result);
+//	}
 
 	public int getCode() {
 		return this.code;
 	}
-	
+
 	public  String getDescription(){
 		String str = null;
-		if (code == StateCode.Queueing.getCode()){
-			str = "Queueing";
-		}else if (code == StateCode.Started.getCode()){
+		if (code == StateCode.Started.getCode()){
 			str = "Started";
 		}else if (code == StateCode.Executing.getCode()){
 			str = "Executing";
 		}else if (code == StateCode.Failed.getCode()){
 			str = "Failed";
-		}else if (code == StateCode.	Successed.getCode()){
+		}else if (code == StateCode.Successed.getCode()){
 			str = "Successed";
 		}else if (code == StateCode.Unknown.getCode()){
 			str = "Unknown";

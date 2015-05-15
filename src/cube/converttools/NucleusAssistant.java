@@ -137,7 +137,7 @@ public final class NucleusAssistant implements TalkListener {
 		try {
 			value = new JSONObject();
 			value.put("filePath", task.getFilePath());
-			value.put("subPath", task.getSubPath());
+			value.put("outPut", task.getOutPutPath());
 			value.put("taskTag", task.getTaskTag());
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -176,6 +176,34 @@ public final class NucleusAssistant implements TalkListener {
 		TalkService.getInstance()
 				.talk(CubeToolsAPI.ConsoleCelletIdentifier, ad);
 	}
+	
+	/**
+	 * mkdir 
+	 */
+	public void makeDir(String dirPath) {
+		ActionDialect ad = new ActionDialect();
+		ad.setAction(CubeToolsAPI.ACTION_MKDIR);
+		ad.act(new ActionDelegate() {
+			@Override
+			public void doAction(ActionDialect dialect) {
+
+			}
+		});
+
+		JSONObject value = null;
+		try {
+			value = new JSONObject();
+			// TODO makedir
+			value.put("dirPath", dirPath);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		ad.appendParam("data", value.toString());
+
+		// 发送数据
+		TalkService.getInstance()
+				.talk(CubeToolsAPI.ConsoleCelletIdentifier, ad);
+	}
 
 	private void processActionDialect(ActionDialect dialect) {
 		if (dialect.getAction().equals(CubeToolsAPI.ACTION_CONVERT_STATE)) {
@@ -184,20 +212,20 @@ public final class NucleusAssistant implements TalkListener {
 			JSONObject data = null;
 			int state = 0;
 			String filePath = null;
-			String subPath = null;
+			String output = null;
 			String taskTag = null;
-			List<String> convertedFileUrls = null;
+			List<String> convertedFileUris = null;
 			String faileCode = null;
 			JSONArray ja = null;
 			try {
 				data = new JSONObject(stringData);
 				state = data.getInt("state");
+				output = data.getString("outPath");
 				taskTag = data.getString("taskTag");
 				filePath = data.getString("filePath");
-				subPath = data.getString("subPath");
-				if (data.has("convertedFileUrls")) {
-					ja = data.getJSONArray("convertedFileUrls");
-					convertedFileUrls = ConvertUtils.parseToList(ja);
+				if (data.has("convertedFileUris")) {
+					ja = data.getJSONArray("convertedFileUris");
+					convertedFileUris = ConvertUtils.parseToList(ja);
 				}
 
 				if (data.has("faileCode")) {
@@ -206,13 +234,10 @@ public final class NucleusAssistant implements TalkListener {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			ConvertTask task = new ConvertTask(filePath, subPath, taskTag);
-			task.setConvertedFileURLList(convertedFileUrls);
+			ConvertTask task = new ConvertTask(filePath, output, taskTag);
+			task.setConvertedFileURIList(convertedFileUris);
 			
-			if (StateCode.Queueing.getCode() == state) {
-				ConvertTool.getInstance().notifyListener(task,
-						StateCode.Queueing);
-			} else if (StateCode.Started.getCode() == state) {
+		    if (StateCode.Started.getCode() == state) {
 				ConvertTool.getInstance().notifyListener(task,
 						StateCode.Started);
 			} else if (StateCode.Executing.getCode() == state) {
@@ -231,9 +256,23 @@ public final class NucleusAssistant implements TalkListener {
 						StateCode.Unknown);
 			}
 
-		} else if (dialect.getAction().equals(
+		} 
+		else if (dialect.getAction().equals(
 				CubeToolsAPI.ACTION_REMOVE_FILE_RESULT)) {
 			// TODO 删除文件
+		}
+		else if (dialect.getAction().equals(
+				CubeToolsAPI.ACTION_MKDIR_ACK)) {
+			String stringData = ((ActionDialect) dialect)
+					.getParamAsString("data");
+			JSONObject data = null;
+		    String state = null;
+			try {
+				data = new JSONObject(stringData);
+				state = data.getString("state");
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

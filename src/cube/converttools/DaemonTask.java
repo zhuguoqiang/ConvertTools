@@ -5,32 +5,36 @@ import java.util.Queue;
 public class DaemonTask extends Thread {
 
 	private Queue<ConvertTask> taskQueue = null;
-	private Object mutex = null;
 	boolean spinning = true;
 
-	public DaemonTask(Object mutex, Queue<ConvertTask> taskQueue) {
+	public DaemonTask(Queue<ConvertTask> taskQueue) {
 		super();
-		this.mutex = mutex;
 		this.taskQueue = taskQueue;
+	}
+
+	public void shutdown() {
+		this.spinning = false;
 	}
 
 	@Override
 	public void run() {
+		while (spinning) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
-		synchronized (this.mutex) {
-			while (spinning) {
-				if (this.taskQueue.isEmpty()) {
-					try {
-						this.mutex.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				} else {
-					ConvertTask task = taskQueue.poll();
-					task.state = StateCode.Executing;
-					// 开始转换
-					task.fireConvert();
+			ConvertTask task = null;
+
+			synchronized (this.taskQueue) {
+				if (!this.taskQueue.isEmpty()) {
+					task = this.taskQueue.poll();
 				}
+			}
+
+			if (null != task) {
+				task.fireConvert();
 			}
 		}
 	}

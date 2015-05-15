@@ -16,7 +16,11 @@ public class ConvertTask {
 	 * 文件路径
 	 */
 	private String filePath = null;
-
+	
+	/**
+	 * 转换文件输出地址 
+	 */
+	private String outPutPath = null;
 	/**
 	 * 目标文件访问子路径
 	 * admin@123/
@@ -46,7 +50,7 @@ public class ConvertTask {
 	/**
 	 * 转换后的文件地址 
 	 */
-	private List<String> convertedFileURLList = null;
+	private List<String> convertedFileURIList = null;
 
 	private final String FILE_EXTENSION = "png";
 	
@@ -55,16 +59,17 @@ public class ConvertTask {
 	 * 
 	 * @param filePath
 	 *            文件路径
-	 * @param subPath
-	 *            目标文件访问子路径
+	 * @param outPutPath            
+	 *            转换文件输出路径
 	 */
-	public ConvertTask(String filePath, String subPath) {
+	public ConvertTask(String filePath, String outPutPath) {
 		this.filePath = filePath;
+		this.outPutPath = outPutPath;
 		this.filePrefix = ConvertUtils
 				.extractFileNameWithoutExtension(filePath);
 		this.fileExtension = FILE_EXTENSION;
 		this.taskTag = Utils.randomString(8);
-		this.subPath = subPath;
+		this.subPath = ConvertUtils.extractFileSubPathFromFilePath(filePath);
 
 	}
 
@@ -73,19 +78,19 @@ public class ConvertTask {
 	 * 
 	 * @param filePath
 	 *            文件路径
-	 * @param subPath
-	 *            目标文件访问子路径
+	 * @param outPutPath            
+	 *            转换文件输出路径
 	 * @param taskTag
 	 *            任务标签
 	 */
-	public ConvertTask(String filePath, String subPath, String taskTag) {
+	public ConvertTask(String filePath,String outPutPath, String taskTag) {
 		this.filePath = filePath;
+		this.outPutPath = outPutPath;
 		this.filePrefix = ConvertUtils
 				.extractFileNameWithoutExtension(filePath);
 		this.fileExtension = FILE_EXTENSION;
 		this.taskTag = taskTag;
-		this.subPath = subPath;
-
+		this.subPath = ConvertUtils.extractFileSubPathFromFilePath(filePath);
 	}
 
 	
@@ -104,6 +109,14 @@ public class ConvertTask {
 
 	public String getFilePath() {
 		return this.filePath;
+	}
+	
+	public void setOutPutPath(String outP) {
+		this.outPutPath = outP;
+	}
+
+	public String getOutPutPath() {
+		return this.outPutPath;
 	}
 
 	public void setFilePrefix(String filePre) {
@@ -138,12 +151,12 @@ public class ConvertTask {
 		return this.taskTag;
 	}
 	
-	public void setConvertedFileURLList(List<String> list) {
-		this.convertedFileURLList = list;
+	public void setConvertedFileURIList(List<String> list) {
+		this.convertedFileURIList = list;
 	}
 
-	public List<String> getConvertedFileURLList() {
-		return this.convertedFileURLList;
+	public List<String> getConvertedFileURIList() {
+		return this.convertedFileURIList;
 	}
 	
 	public void setFaileCode(String code) {
@@ -155,6 +168,7 @@ public class ConvertTask {
 	}
 
 	public void fireConvert() {
+		this.state = StateCode.Executing;
 		// TODO
 		if (null != this.filePath) {
 			NucleusAssistant.getInstance().convert(this);

@@ -3,6 +3,8 @@ package cube.converttools;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import net.cellcloud.talk.TalkService;
+
 /**
  * 转换工具类
  */
@@ -18,13 +20,6 @@ public class ConvertTool {
 	 */
 	DaemonTask threadTask = null;
 
-	/**
-	 * 互斥锁
-	 */
-	private Object mutex = new Object();
-
-	boolean spinning = false;
-
 	private static ConvertTool instance = new ConvertTool();
 
 	/**
@@ -35,9 +30,7 @@ public class ConvertTool {
 	/**
 	 * 构造
 	 */
-
 	private ConvertTool() {
-
 	}
 
 	/**
@@ -64,9 +57,10 @@ public class ConvertTool {
 	/**
 	 * 启动Cellet
 	 */
-	public void startup(final String host, final int port) {
+	public void start(final String host, final int port) {
 		NucleusAssistant.getInstance().start(host, port);
-		threadTask = new DaemonTask(mutex, taskQueue);
+
+		threadTask = new DaemonTask(taskQueue);
 		threadTask.start();
 	}
 
@@ -75,27 +69,26 @@ public class ConvertTool {
 	 */
 	public void stop() {
 		NucleusAssistant.getInstance().stop();
-		synchronized (this.mutex) {
-			mutex.notifyAll();
-		}
+		threadTask.shutdown();
 		threadTask = null;
 	}
 
 	/**
 	 * 入队 task 转换文件任务
 	 */
-	public void addConvertTask(ConvertTask task) {
-		// TODO
+	public boolean addConvertTask(ConvertTask task) {
+		if (!TalkService.getInstance().isCalled(CubeToolsAPI.ConsoleCelletIdentifier)) {
+			return false;
+		}
 		if (null != task) {
 			// 入队
-			synchronized (mutex) {
+			synchronized (taskQueue) {
 				taskQueue.offer(task);
-				task.state = StateCode.Queueing;
-				threadTask.spinning = true;
-				mutex.notify();
 			}
+			return true;
 		} else {
 			System.out.println(this.getClass() + " task is null");
+			return false;
 		}
 	}
 
@@ -121,10 +114,7 @@ public class ConvertTool {
 
 		task.setStateCode(state);
 		if (listener != null) {
-			if (StateCode.Queueing.getCode() == state.getCode()) {
-				listener.onQueueing(task);
-			}
-			else if (StateCode.Started.getCode() == state.getCode()) {
+			if (StateCode.Started.getCode() == state.getCode()) {
 				listener.onStarted(task);
 			} 
 			else if (StateCode.Executing.getCode() == state.getCode()) {

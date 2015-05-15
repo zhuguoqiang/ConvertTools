@@ -18,7 +18,7 @@ public class Main implements ConvertTaskListener {
 		String host = "211.103.217.154";
 		int port = 10000;
 
-		ConvertTool.getInstance().startup(host, port);
+		ConvertTool.getInstance().start(host, port);
 		ConvertTool.getInstance().setListener(new Main());
 
 		// ConvertTool.getInstance().setFilePath("/home/lztxhost/Documents/CubeConsole/Mooohe.ppt");
@@ -39,20 +39,26 @@ public class Main implements ConvertTaskListener {
 		// 已连接
 		Utils utils = new Utils();
 		// 封装转换任务
+		String outPut = "/home/lztxhost/apache-tomcat-7.0.61/webapps/ROOT/cubewhiteboard/shared/";
+
+		/**pdf**/
 		 String filePath1 =
-		 "/home/lztxhost/Documents/CubeConsole/MCE_Client_v2.doc";
-		String subPath = "admin/";
-		 ConvertTask task1 = new ConvertTask(filePath1, subPath);
+		 "/home/lztxhost/apache-tomcat-7.0.61/webapps/ROOT/local/upload/zhuguoqiang@163.com/MCE_Cube_Cloud.pdf";
+		 ConvertTask task1 = new ConvertTask(filePath1, outPut);
 		 ConvertTool.getInstance().addConvertTask(task1);
 
+		/**doc**/
 		 String filePath2 =
-		 "/home/lztxhost/Documents/CubeConsole/MCE_Cube_Cloud.pdf";
-		 ConvertTask task2 = new ConvertTask(filePath2, subPath);
+				 "/home/lztxhost/apache-tomcat-7.0.61/webapps/ROOT/local/upload/zhuguoqiang@163.com/MCE服务器技术说明书v.2.doc";
+		 ConvertTask task2 = new ConvertTask(filePath2, outPut);
 		 ConvertTool.getInstance().addConvertTask(task2);
+		 
+		 /**png**/
+		 String filePath3 =
+				 "/home/lztxhost/apache-tomcat-7.0.61/webapps/ROOT/local/upload/zhuguoqiang@163.com/cerqdsOmxuuRI.png";
+		 ConvertTask task3 = new ConvertTask(filePath3, outPut);
+		 ConvertTool.getInstance().addConvertTask(task3);
 
-		String filePath3 = "/home/lztxhost/Documents/CubeConsole/aaaaa.png";
-		ConvertTask task3 = new ConvertTask(filePath3, subPath);
-		ConvertTool.getInstance().addConvertTask(task3);
 	}
 
 	@Override
@@ -79,7 +85,7 @@ public class Main implements ConvertTaskListener {
 	public void onCompleted(ConvertTask task) {
 		Logger.d(this.getClass(), "\n ConvertTask: " + task.getTaskTag()
 				+ " state : " + task.state.getDescription() + "\n"
-				+ " FileURLList : " + task.getConvertedFileURLList().toString());
+				+ " FileURIList : " + task.getConvertedFileURIList().toString());
 
 	}
 
@@ -90,8 +96,8 @@ public class Main implements ConvertTaskListener {
 				this.getClass(),
 				"\n ConvertTask: " + task.getTaskTag() + " Failed : "
 						+ code.getDescription() + " failCode : "
-						+ task.getFaileCode() + " FileURLList : "
-						+ task.getConvertedFileURLList().toString());
+						+ task.getFaileCode() + " FileURIList : "
+						+ task.getConvertedFileURIList().toString());
 	}
 
 }
